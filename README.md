@@ -1,5 +1,9 @@
 # ln2sql
 
+<p>
+This is a Postgres port.
+</p>
+
 <b>ln2sql is a NLP tool to query a database in natural language.</b> The tool takes in input a database model and a sentence and translate the latter in a valid SQL statement able to query the input data model.
 
 ##### Scientific paper

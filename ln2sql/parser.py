@@ -801,6 +801,7 @@ class Parser:
 
         for i in range(0, len(words)):
             for table_name in self.database_dico:
+                #print(words[i], table_name)
                 if (words[i] == table_name) or (
                             words[i] in self.database_object.get_table_by_name(table_name).equivalences):
                     if number_of_table == 0:
@@ -810,6 +811,7 @@ class Parser:
                     last_table_position = i
 
                 columns = self.database_object.get_table_by_name(table_name).get_columns()
+                #print('cols', columns, table_name)
                 for column in columns:
                     if (words[i] == column.name) or (words[i] in column.equivalences):
                         if number_of_table == 0:
@@ -833,8 +835,10 @@ class Parser:
         if len(tables_of_from) > 0:
             from_phrases = []
             previous_index = 0
+            #print(from_phrase,'and', tables_of_from, 'being compared')
             for i in range(0, len(from_phrase)):
                 for table in tables_of_from:
+
                     if (from_phrase[i] == table) or (
                                 from_phrase[i] in self.database_object.get_table_by_name(table).equivalences):
                         from_phrases.append(from_phrase[previous_index:i + 1])
@@ -854,7 +858,7 @@ class Parser:
 
                 if (number_of_junction_words + number_of_disjunction_words) > 0:
                     last_junction_word_index = i
-
+            #print(from_phrases)
             if last_junction_word_index == -1:
                 from_phrase = sum(from_phrases[:1], [])
                 where_phrase = sum(from_phrases[1:], []) + where_phrase
@@ -869,6 +873,8 @@ class Parser:
                 if (word == table) or (word in self.database_object.get_table_by_name(table).equivalences):
                     real_tables_of_from.append(table)
 
+        #print(from_phrase)
+        #print(tables_of_from)
         tables_of_from = real_tables_of_from
 
         if len(tables_of_from) == 0:

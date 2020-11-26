@@ -108,7 +108,7 @@ class Database:
         table = Table()
         for line in lines:
             if 'TABLE' in line:
-                table_name = re.search("`(\w+)`", line)
+                table_name = re.search("public.(\w+)", line)
                 table.name = table_name.group(1)
                 if self.thesaurus_object is not None:
                     table.equivalences = self.thesaurus_object.get_synonyms_of_a_word(table.name)
@@ -117,7 +117,7 @@ class Database:
                 for primary_key_column in primary_key_columns:
                     table.add_primary_key(primary_key_column)
             else:
-                column_name = re.search("`(\w+)`", line)
+                column_name = re.search("(\w+)", line)
                 if column_name is not None:
                     column_type = self.predict_type(line)
                     if self.thesaurus_object is not None:
@@ -131,13 +131,13 @@ class Database:
         lines = alter_string.replace('\n', ' ').split(';')
         for line in lines:
             if 'PRIMARY KEY' in line:
-                table_name = re.search("TABLE `(\w+)`", line).group(1)
+                table_name = re.search("TABLE ONLY public.(\w+)", lines[0]).group(1)
                 table = self.get_table_by_name(table_name)
                 primary_key_columns = re.findall("PRIMARY KEY \(`(\w+)`\)", line)
                 for primary_key_column in primary_key_columns:
                     table.add_primary_key(primary_key_column)
             elif 'FOREIGN KEY' in line:
-                table_name = re.search("TABLE `(\w+)`", line).group(1)
+                table_name = re.search("TABLE ONLY public.(\w+)", lines[0]).group(1)
                 table = self.get_table_by_name(table_name)
                 foreign_keys_list = re.findall("FOREIGN KEY \(`(\w+)`\) REFERENCES `(\w+)` \(`(\w+)`\)", line)
                 for column, foreign_table, foreign_column in foreign_keys_list:
@@ -150,9 +150,9 @@ class Database:
             print('+-------------------------------------+')
             for column in table.columns:
                 if column.is_primary():
-                    print("| 🔑 %31s           |" % (Color.BOLD + column.name + ' (' + column.get_type() + ')' + Color.END))
+                    print("| 🔑 %31s           |" % (Color.BOLD + column.name +  Color.END))
                 elif column.is_foreign():
-                    print("| #️⃣ %31s           |" % (Color.ITALIC + column.name + ' (' + column.get_type() + ')' + Color.END))
+                    print("| #️⃣ %31s           |" % (Color.ITALIC + column.name +  Color.END))
                 else:
-                    print("|   %23s           |" % (column.name + ' (' + column.get_type() + ')'))
+                    print("|   %23s           |" % (column.name  ))
             print('+-------------------------------------+\n')
